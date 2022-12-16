@@ -1,12 +1,12 @@
 import "./Accordion.css"
-import React, { FunctionComponent, ReactNode, useState, createContext, useContext } from "react"
+import React, { FunctionComponent, ReactNode } from "react"
+import { Getter, Provider as JotaiProvider, Setter, atom, useAtom } from "jotai"
 
-interface IDataContext {
-    isExpand: boolean
-    setIsExpand: Function
-}
+const expandAtom = atom<boolean>(false)
+const setExpandAtom = atom(null, (get: Getter, set: Setter, state: boolean) => {
+    set(expandAtom, !state)
+})
 
-const DataContext = createContext<IDataContext | null> (null)
 
 type Props = {
     children: ReactNode
@@ -18,23 +18,18 @@ interface IAccordionProps {
 }
 
 const Accordion: FunctionComponent<Props> & IAccordionProps = ({ children }) => {
-    const [isExpand, setIsExpand] = useState<boolean>(false)
-    const contextValue: IDataContext = {
-        isExpand,
-        setIsExpand
-    }
     return (
-        <DataContext.Provider value={contextValue}>
+        <JotaiProvider>
             { children }
-        </DataContext.Provider>
+        </JotaiProvider>
     )
 }
 
 const AccordionContent: FunctionComponent<Props> = ({ children }) => {
-    const { isExpand } = useContext(DataContext) as IDataContext
+    const [expand] = useAtom(expandAtom)
 
     return (
-        <div className={`accordion__item ${isExpand === true ? `active` : ''}`}>
+        <div className={`accordion__item ${expand === true ? `active` : ''}`}>
             <div className="accordion__content">
                 <p className="accordion__description">{ children }</p>
             </div>
@@ -43,11 +38,11 @@ const AccordionContent: FunctionComponent<Props> = ({ children }) => {
 }
 
 const AccordionHeader: FunctionComponent<Props> = ({ children }) => {
-    const { isExpand, setIsExpand } = useContext(DataContext) as IDataContext
+    const [, setExpand] = useAtom(setExpandAtom)
+    const [expand] = useAtom(expandAtom)
 
     return (
-        <div onClick={() => setIsExpand(!isExpand)}>
-            
+        <div onClick={() => setExpand(expand)}>
             <h3 className="accordion__title"><span className="accordion__icon">+</span> { children }</h3>
         </div>
     )

@@ -1,6 +1,5 @@
 import './App.css';
 import { Accordion } from './components';
-import { Provider as JotaiProvider } from "jotai";
 
 const datas = [
   {
@@ -27,18 +26,16 @@ const datas = [
 
 function App() {
   return (
-    <JotaiProvider>
-        <main>
-          <section className='container accordion'>
-            {datas.map((data: any, idx: number) => (
-              <Accordion key={idx}>
-                <Accordion.Header>{data.question}</Accordion.Header>
-                <Accordion.Content>{data.answer}</Accordion.Content>
-              </Accordion>
-            ))}
-          </section>
-        </main>
-      </JotaiProvider>
+      <main>
+        <section className='container accordion'>
+          {datas.map((data: any, idx: number) => (
+            <Accordion key={idx}>
+              <Accordion.Header>{data.question}</Accordion.Header>
+              <Accordion.Content>{data.answer}</Accordion.Content>
+            </Accordion>
+          ))}
+        </section>
+      </main>
   );
 }
 
